@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 
 export async function getCollections(offset?: number) {
 
-    if(typeof offset !== "undefined") {
+    if(typeof offset !== "undefined" && offset >= 500) {
         const url = `https://api-devnet.magiceden.dev/v2/collections?offset=0&limit=${offset}`
 
         const response = await (await fetch(url)).json()
