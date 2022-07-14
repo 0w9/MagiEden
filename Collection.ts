@@ -1,21 +1,52 @@
 import fetch from "node-fetch";
 
-export async function getCollections(offset?: number) {
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
 
-    if(typeof offset !== "undefined" && offset >= 500) {
-        const url = `https://api-devnet.magiceden.dev/v2/collections?offset=0&limit=${offset}`
+export async function getCollections(max_amount?: number) {
+    let pulled = 0;
 
-        const response = await (await fetch(url)).json()
+    while(true) {
+        const url = `https://api-mainnet.magiceden.dev/v2/collections?offset=${pulled}&limit=500`
+        let collections = await ( await fetch(url) ).json()
 
-        console.log(response);
-    } else {
-        const url = `https://api-devnet.magiceden.dev/v2/collections?offset=0&limit=500`
+        let mapped = [];
 
-        const response = await (await fetch(url)).json()
+        for(let collection of collections) {
+            mapped.push({
+                symbol: collection.symbol,
+                name: collection.name,
+                image: collection.image,
+            })
+        }
 
-        console.log(response);
+        await prisma.collections.createMany({ data: mapped })
+
+        pulled = pulled + mapped.length;
     }
-
 }
 
-getCollections();
+export async function SaveCollectionFP(symbol: string) {
+    while (true) {
+        let url = `https://api-mainnet.magiceden.dev/v2/collections/${symbol}/stats`
+        let response =  (await (await fetch(url)).json())
+        let FP = response.floorPrice;
+        console.log(FP);
+
+        // @ts-ignore
+        await prisma.floor_prices.create({
+            data: {
+                symbol,
+                timestamp_ms: Date.now(),
+                fp_lamports: FP,
+            }
+        })
+
+        await new Promise(r => setTimeout(r, 5000));
+    }
+}
+
+//getCollections();
+//getCollections(500);
+
+SaveCollectionFP("maskedmvmnt")

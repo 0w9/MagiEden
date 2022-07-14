@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root@localhost:3306/MagicEden_FP?schema=public"
+}
+
+model collections {
+  symbol String  @id @unique(map: "collections_symbol_uindex") @db.VarChar(524)
+  name   String  @db.VarChar(524)
+  image  String? @db.VarChar(524)
+}
+
+model floor_prices {
+  symbol       String @id @db.VarChar(524)
+  timestamp_ms BigInt
+  fp_lamports  Int
+}
