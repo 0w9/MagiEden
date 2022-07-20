@@ -4,7 +4,7 @@ var now = require("performance-now")
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
-export async function getCollections(max_amount: number = 0, limit: number = 100) {
+export async function getCollections(max_amount: number = 0, limit: number = 100): Promise<void> {
 
     let pulled = 0;
 
@@ -26,7 +26,7 @@ export async function getCollections(max_amount: number = 0, limit: number = 100
     }
 }
 
-export async function SaveCollectionFP() {
+export async function SaveCollectionFP(): Promise<void> {
     const collections = await prisma.collections.findMany();
 
     for(let collection of collections) {
@@ -46,7 +46,7 @@ export async function SaveCollectionFP() {
 }
 
 // getCollections will round to the next 100. So the limit can be set to 100 to prevent a) API spams and b) long loading times.
-getCollections(200);
+//getCollections(100);
 
 console.log(`DONE! Starting to save FPs.`)
-SaveCollectionFP()
+SaveCollectionFP();
