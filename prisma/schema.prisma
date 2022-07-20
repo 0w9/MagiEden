@@ -16,7 +16,7 @@ model collections {
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model floor_prices {
   timestamp_ms BigInt?
-  fp_lamports  Int?
+  fp_lamports  Float?
   id           Int     @id @unique  @default(autoincrement())
   symbol       String? @db.VarChar
 }
